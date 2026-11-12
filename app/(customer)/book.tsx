@@ -1,3 +1,4 @@
+
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -6,15 +7,19 @@ import { useApp } from '../../src/store';
 import { colors, radius, shadow } from '../../src/theme';
 import { Button, DateField, Field, Header } from '../../src/ui';
 
+// Get tomorrow's date as the default booking date
 const tomorrow = () => {
   const d = new Date();
   d.setDate(d.getDate() + 1);
   return d;
 };
 
+// Handle customer service booking form
 export default function BookService() {
   const router = useRouter();
   const { user, createBooking } = useApp();
+
+  // Store selected category and form input values
   const [category, setCategory] = useState<CategoryId | null>(null);
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -22,32 +27,44 @@ export default function BookService() {
   const [address, setAddress] = useState(user?.address ?? '');
   const [error, setError] = useState('');
 
+  // Select a category and fill its starting price if price is empty
   const pick = (id: CategoryId, startingPrice: number) => {
     setCategory(id);
     if (!price) setPrice(String(startingPrice));
   };
 
-  const submit = () => {
+  // Validate form, create booking and navigate to My Bookings
+  const submit = async () => {
     const amount = parseInt(price, 10);
+
     if (!category) return setError('Select the service you need.');
     if (description.trim().length < 10) return setError('Describe the problem in a few words (at least 10 characters).');
     if (!amount || amount <= 0) return setError('Enter the price you want to offer.');
     if (toYMD(date) < toYMD(new Date())) return setError('Choose a date that is today or later.');
     if (!address.trim()) return setError('Enter the service address.');
+
     setError('');
-    createBooking({ category, description: description.trim(), price: amount, date: toYMD(date), address: address.trim() });
+
+    // Save booking details and reset form after submission
+    await createBooking({ category, description: description.trim(), price: amount, date: toYMD(date), address: address.trim() });
+
     setCategory(null);
     setDescription('');
     setPrice('');
     setDate(tomorrow());
+
     router.navigate('/bookings');
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Header title="Book a Service" subtitle="Send your request to providers" />
+
+      {/* Adjust screen for keyboard and allow scrolling */}
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+
+          {/* Display available service categories */}
           <Text style={styles.label}>1. Select a service</Text>
           <View style={styles.grid}>
             {CATEGORIES.map((c) => (
@@ -58,6 +75,7 @@ export default function BookService() {
             ))}
           </View>
 
+          {/* Collect problem description */}
           <Field
             label="2. Describe the problem"
             value={description}
@@ -65,6 +83,8 @@ export default function BookService() {
             multiline
             placeholder="What is wrong? Anything the provider should know?"
           />
+
+          {/* Collect offered price */}
           <Field
             label="3. Your offered price (Rs)"
             icon="cash-outline"
@@ -73,7 +93,11 @@ export default function BookService() {
             keyboardType="number-pad"
             placeholder="e.g. 1500"
           />
+
+          {/* Select preferred booking date */}
           <DateField label="4. Preferred date" value={date} onChange={setDate} />
+
+          {/* Collect service location */}
           <Field
             label="5. Service address"
             icon="location-outline"
@@ -83,6 +107,7 @@ export default function BookService() {
             multiline
           />
 
+          {/* Show validation errors and submit booking */}
           {error ? <Text style={{ color: colors.danger, textAlign: 'center', marginBottom: 12 }}>{error}</Text> : null}
           <Button title="Send request" variant="accent" icon="paper-plane" onPress={submit} />
         </ScrollView>
@@ -91,6 +116,7 @@ export default function BookService() {
   );
 }
 
+// Define styles for form labels and service category cards
 const styles = StyleSheet.create({
   label: { color: colors.primary, fontWeight: '700', marginBottom: 10, fontSize: 15 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 8 },

@@ -8,7 +8,8 @@
     "scheme": "servizo",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.servizo.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +18,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.servizo.app"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +40,17 @@
       "expo-font",
       "expo-asset",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "15ad6620-f242-49ba-943b-5291d2f86410"
+      }
+    },
+    "owner": "sazwaasif"
   }
 }
