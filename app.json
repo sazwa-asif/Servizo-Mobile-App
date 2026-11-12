@@ -8,12 +8,7 @@
     "scheme": "servizo",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": false,
-      "infoPlist": {
-        "NSCameraUsageDescription": "Servizo uses the camera so you can attach photos of the problem.",
-        "NSPhotoLibraryUsageDescription": "Servizo needs photo access so you can attach photos of the problem.",
-        "NSLocationWhenInUseUsageDescription": "Servizo uses your location to fill in the service address."
-      }
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
@@ -40,21 +35,9 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Servizo needs photo access so you can attach photos of the problem.",
-          "cameraPermission": "Servizo uses the camera so you can attach photos of the problem."
-        }
-      ],
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "Servizo uses your location to fill in the service address."
-        }
-      ],
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      "expo-secure-store"
     ]
   }
 }
